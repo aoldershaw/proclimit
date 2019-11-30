@@ -34,7 +34,7 @@ func parseArgs() (cmdArgs, error) {
 	flag.UintVar(&a.CPULimit, "cpu", 0, "maximum CPU percentage based on a single core (100 = 1 core)")
 	memoryString := flag.String("memory", "", "maximum memory usage in bytes (e.g. 1G)")
 	flag.Parse()
-	if memoryString != nil {
+	if memoryString != nil && *memoryString != "" {
 		var err error
 		a.MemoryLimit, err = parseMemory(*memoryString)
 		if err != nil {
