@@ -18,7 +18,7 @@ go get github.com/aoldershaw/proclimit
 To install and run the application:
 
 ```bash
-go install github.com/aoldershaw/proclimit/cmd/proclimit
+go get github.com/aoldershaw/proclimit/cmd/proclimit
 
 proclimit -cpu=50 -memory=512M my-application arg1 arg2
 ```
