@@ -34,9 +34,9 @@ func main() {
     defer limiter.Close()
 
     // limiter.Command is nearly identical to exec.Command, and can be used in the same way
-	cmd := limiter.Command("my-application", "arg1", "arg2")
-	cmd.Stdout = os.Stdout
-	cmd.Run()
+    cmd := limiter.Command("my-application", "arg1", "arg2")
+    cmd.Stdout = os.Stdout
+    cmd.Run()
 }
 ```
 
