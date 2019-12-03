@@ -13,7 +13,7 @@ func ExampleNew() {
 	limiter, err := proclimit.New(
 		proclimit.WithName("my-cgroup"),
 		proclimit.WithCPULimit(proclimit.Percent(50)),
-		proclimit.WithMemoryLimit(512 * proclimit.Megabyte),
+		proclimit.WithMemoryLimit(512*proclimit.Megabyte),
 	)
 	if err != nil {
 		// handle err

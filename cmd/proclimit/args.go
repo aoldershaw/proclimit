@@ -67,11 +67,11 @@ func parseMemory(memory string) (proclimit.Memory, error) {
 	if hasSuffix {
 		memory = memory[0 : len(memory)-1]
 	}
-	num, err := strconv.ParseInt(memory, 10, 32)
+	num, err := strconv.ParseFloat(memory, 64)
 	if err != nil {
 		return 0, errors.Wrap(err, "invalid memory value")
 	}
-	return proclimit.Memory(num) * factor, nil
+	return proclimit.Memory(num * float64(factor)), nil
 }
 
 func hasMemorySuffix(s, letter string) bool {

@@ -9,7 +9,7 @@ import (
 )
 
 var (
-	modkernel32 = syscall.NewLazyDLL("modkernel32.dll")
+	modkernel32 = syscall.NewLazyDLL("kernel32.dll")
 
 	procCreateJobObjectA         = modkernel32.NewProc("CreateJobObjectA")
 	procAssignProcessToJobObject = modkernel32.NewProc("AssignProcessToJobObject")

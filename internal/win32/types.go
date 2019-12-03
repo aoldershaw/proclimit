@@ -21,6 +21,7 @@ const (
 	STANDARD_RIGHTS_READ      ProcessAccessFlags = 0x00020000
 	PROCESS_QUERY_INFORMATION                    = 0x00000400
 	SYNCHRONIZE                                  = 0x00100000
+	PROCESS_SET_INFORMATION                      = 0x02000000
 )
 
 // https://docs.microsoft.com/en-us/windows/win32/api/winnt/ns-winnt-jobobject_associate_completion_port

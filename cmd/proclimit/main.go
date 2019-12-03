@@ -4,7 +4,8 @@ import (
 	"github.com/aoldershaw/proclimit"
 	"log"
 	"os"
-	"os/exec"
+	"os/signal"
+	"runtime"
 )
 
 func main() {
@@ -30,8 +31,10 @@ func main() {
 	defer func() {
 		if err != nil {
 			exitCode := 1
-			if exitErr, ok := err.(*exec.ExitError); ok {
+			if exitErr, ok := err.(interface{ ExitCode() int }); ok {
 				exitCode = exitErr.ExitCode()
+			} else {
+				log.Println(err)
 			}
 			os.Exit(exitCode)
 		}
@@ -42,6 +45,21 @@ func main() {
 	cmd.Stdout = os.Stdout
 	cmd.Stderr = os.Stderr
 	cmd.Stdin = os.Stdin
+
+	sigs := make(chan os.Signal, 1)
+	signal.Notify(sigs, os.Interrupt)
+	go func() {
+		sig := <-sigs
+		if cmd.Process != nil {
+			// https://golang.org/pkg/os/#Signal
+			// "On Windows, sending os.Interrupt to a process with os.Process.Signal is not implemented"
+			if runtime.GOOS == "windows" {
+				cmd.Process.Kill()
+			} else {
+				cmd.Process.Signal(sig)
+			}
+		}
+	}()
 
 	err = cmd.Run()
 }

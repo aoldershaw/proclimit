@@ -6,6 +6,7 @@ import (
 	"github.com/aoldershaw/proclimit/internal/win32"
 	"github.com/friendsofgo/errors"
 	"os/exec"
+	"runtime"
 )
 
 // TODO: godocs
@@ -23,8 +24,7 @@ func WithCPULimit(cpuLimit Percent) Option {
 		if jobObject.CPULimitInformation == nil {
 			jobObject.CPULimitInformation = &win32.JobObjectCPURateControlInformation{}
 		}
-		// TODO: divide by num cores? or is this already based on a single core
-		jobObject.CPULimitInformation.CPURate = uint32(cpuLimit * 100)
+		jobObject.CPULimitInformation.CPURate = uint32(cpuLimit*100) / uint32(runtime.NumCPU())
 		jobObject.CPULimitInformation.ControlFlags |= win32.JOB_OBJECT_CPU_RATE_CONTROL_ENABLE
 		jobObject.CPULimitInformation.ControlFlags |= win32.JOB_OBJECT_CPU_RATE_CONTROL_HARD_CAP
 	}
@@ -98,13 +98,12 @@ func (j *JobObject) Limit(pid int) error {
 	if pid == 0 {
 		return errors.New("must provide a valid pid")
 	}
-	handle, err := win32.OpenProcess(win32.STANDARD_RIGHTS_READ|win32.PROCESS_QUERY_INFORMATION|win32.SYNCHRONIZE,
+	handle, err := win32.OpenProcess(win32.STANDARD_RIGHTS_READ|win32.PROCESS_QUERY_INFORMATION|win32.SYNCHRONIZE|win32.PROCESS_SET_INFORMATION,
 		false, uint32(pid))
 	if err != nil {
 		return errors.Wrap(err, "failed to open process handle")
 	}
-	// TODO: will this panic (since exec.Cmd.Start calls this on finish I think)? or does it kill the process?
-	//defer win32.CloseHandle(handle)
+	defer win32.CloseHandle(handle)
 	if err = win32.AssignProcessToJobObject(j.handle, handle); err != nil {
 		return errors.Wrap(err, "failed to assign process to job object")
 	}
